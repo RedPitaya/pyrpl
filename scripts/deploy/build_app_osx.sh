@@ -1,10 +1,10 @@
 #!/bin/bash
 
-CONDA_DIR="/opt/conda"
+CONDA_DIR=$(pwd)/conda
 PYTHON_VERSION="3.8"
 GIT_COMMIT_SHORT=$(git rev-parse --short HEAD)
 DATE=$(date +%Y-%m)
-wget https://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O Miniconda.sh
+wget https://repo.continuum.io/miniconda/Miniconda3-latest-MacOSX-arm64.sh -O Miniconda.sh
 chmod +x Miniconda.sh
 ./Miniconda.sh -u -b -p $CONDA_DIR
 $CONDA_DIR/bin/conda create -y -n pyrpl python=$PYTHON_VERSION
@@ -24,7 +24,7 @@ python setup.py develop
 # make package
 pyinstaller pyrpl.spec
 cp ./dist/pyrpl ./pyrpl-$DATE-$GIT_COMMIT_SHORT
-zip pyrpl-linux_x86-$DATE-$GIT_COMMIT_SHORT.zip pyrpl-$DATE-$GIT_COMMIT_SHORT
+zip pyrpl-osx-arm64-$DATE-$GIT_COMMIT_SHORT.zip pyrpl-$DATE-$GIT_COMMIT_SHORT
 
 # run tests
 # export REDPITAYA_HOSTNAME=200.0.0.29
