@@ -23,20 +23,22 @@ The easiest and fastest way to get PyRPL is to download and execute the [precomp
 If instead you would like to use and/or modify the source code, make sure you have an
 installation of Python (2.7, 3.4, 3.5, or 3.6). If you are new to Python or unexperienced with fighting installation issues, it is recommended to install the [Anaconda](https://www.continuum.io/downloads) Python distribution, which allows to install all PyRPL dependencies via
 ```
-conda install numpy scipy paramiko pandas nose pip pyqt qtpy pyqtgraph pyyaml nbconvert
+conda install pip
+python -m pip install --upgrade pip
+conda install numpy scipy paramiko pandas nose pyqt5 qtpy pyqtgraph pyyaml nbconvert
 ```
 Check [this documentation section](http://pyrpl.readthedocs.io/en/latest/user_guide/installation/common_problems.html#anaconda-problems) for hints if you are unable to execute conda in a terminal. Alternatively, if you prefer creating a virtual environment for pyrpl, do so with the following two commands
 ```
-conda create -y -n pyrpl-env numpy scipy paramiko pandas nose pip pyqt qtpy pyqtgraph pyyaml nbconvert
+conda create -y -n pyrpl-env numpy scipy paramiko pandas nose pip pyqt5 qtpy pyqtgraph pyyaml nbconvert
 activate pyrpl-env
 ```
 If you are not using Anaconda, you must manually install the python package [PyQt5](https://pypi.python.org/pypi/PyQt5) or [PyQt4](https://pypi.python.org/pypi/PyQt4), which requires a working C compiler installation on the system.
 
 Next, clone (if you have a [git client](https://git-scm.com/downloads) installed - recommended option) the pyrpl repository to your computer with 
 ```
-git clone https://github.com/lneuhaus/pyrpl.git
+git clone https://github.com/RedPitaya/pyrpl.git
 ```
-or [download and extract](https://github.com/lneuhaus/pyrpl/archive/master.zip) (if you do not want to install git on your computer) the repository. 
+or [download and extract](https://github.com/RedPitaya/pyrpl/archive/master.zip) (if you do not want to install git on your computer) the repository. 
 
 Install PyRPL by navigating with the command line terminal (the one where the pyrpl-env environment is active in case you are using anaconda) into the pyrpl root directory and typing
 ```
