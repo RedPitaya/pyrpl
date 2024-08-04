@@ -43,12 +43,12 @@ requirements = ['scp',
                 #'ruamel.yaml' # temporarily disabled
                 'pandas',
                 'pyqtgraph',
-                'numpy>=1.9',
+                'numpy>=1.9,<2.0',
                 'paramiko>=2.0',
                 'nose>=1.0',
-                'PyQt5<=5.14',  # cannot be installed with pip
-                'qtpy<=1.9',  # qtpy 1.11 contains breaking API changes related to pyqtSignals
-                'ipykernel>=5,<6',  # otherwise jupyter breaks
+                # 'PyQt5<=5.14',  # Should be installed using conda or system, cannot be installed with pip
+                'qtpy',  
+                'ipykernel',
                 'nbconvert',
                 'jupyter-client']
 if sys.version_info >= (3,4):  # python version dependencies
