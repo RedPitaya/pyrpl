@@ -9,9 +9,9 @@ import numpy as np
 import sys
 from ... import APP
 
-class MyGraphicsWindow(pg.GraphicsWindow):
+class MyGraphicsLayoutWidget(pg.GraphicsLayoutWidget):
     def __init__(self, title, parent):
-        super(MyGraphicsWindow, self).__init__(title)
+        super(MyGraphicsLayoutWidget, self).__init__(title)
         self.parent = parent
         self.setToolTip("-----plot legend---------------\n"
                         "yellow: theoretical IIR transfer function\n"
@@ -41,7 +41,7 @@ class MyGraphicsWindow(pg.GraphicsWindow):
             self.parent.module.select_pole_or_zero(self.x)
         if not self.mouse_clicked_timer.isActive():
             self.mouse_clicked_timer.start()
-        return super(MyGraphicsWindow, self).mousePressEvent(event)
+        return super(MyGraphicsLayoutWidget, self).mousePressEvent(event)
 
     def mouseDoubleClickEvent(self, event):
         self.doubleclicked = True
@@ -49,7 +49,7 @@ class MyGraphicsWindow(pg.GraphicsWindow):
         if self.mouse_clicked_timer.isActive():
             self.mouse_clicked_timer.stop()
             self.mouse_clicked()
-        return super(MyGraphicsWindow, self).mouseDoubleClickEvent(event)
+        return super(MyGraphicsLayoutWidget, self).mouseDoubleClickEvent(event)
 
     def storeevent(self, event):
         self.button = event.button()
@@ -89,7 +89,7 @@ class MyGraphicsWindow(pg.GraphicsWindow):
             index = self.parent.module._selected_index
             return self.parent.parent.attribute_widgets[name].widgets[index].keyPressEvent(event)
         except:
-            return super(MyGraphicsWindow, self).keyPressEvent(event)
+            return super(MyGraphicsLayoutWidget, self).keyPressEvent(event)
 
     def keyReleaseEvent(self, event):
         """ not working properly yet"""
@@ -99,7 +99,7 @@ class MyGraphicsWindow(pg.GraphicsWindow):
                 index = self.parent.module._selected_index
                 return self.parent.parent.attribute_widgets[name].widgets[index].keyReleaseEvent(event)
             except:
-                return super(MyGraphicsWindow, self).keyReleaseEvent(event)
+                return super(MyGraphicsLayoutWidget, self).keyReleaseEvent(event)
 
 
 class IirGraphWidget(QtWidgets.QGroupBox):
@@ -113,8 +113,8 @@ class IirGraphWidget(QtWidgets.QGroupBox):
         self.parent = parent
         self.module = self.parent.module
         self.layout = QtWidgets.QVBoxLayout(self)
-        self.win = MyGraphicsWindow(title="Amplitude", parent=self)
-        self.win_phase = MyGraphicsWindow(title="Phase", parent=self)
+        self.win = MyGraphicsLayoutWidget(title="Amplitude", parent=self)
+        self.win_phase = MyGraphicsLayoutWidget(title="Phase", parent=self)
         # self.proxy = pg.SignalProxy(self.win.scene().sigMouseClicked,
         # rateLimit=60, slot=self.mouse_clicked)
         self.mag = self.win.addPlot(title="Magnitude (dB)")
@@ -380,7 +380,7 @@ class IirWidget(ModuleWidget):
             index = self.module._selected_index
             return self.attribute_widgets[name].widgets[index].keyPressEvent(event)
         except:
-            return super(MyGraphicsWindow, self).keyPressEvent(event)
+            return super(MyGraphicsLayoutWidget, self).keyPressEvent(event)
 
     def keyReleaseEvent(self, event):
         """ not working properly yet"""
@@ -390,4 +390,4 @@ class IirWidget(ModuleWidget):
                 index = self.module._selected_index
                 return self.attribute_widgets[name].widgets[index].keyReleaseEvent(event)
             except:
-                return super(MyGraphicsWindow, self).keyReleaseEvent(event)
+                return super(MyGraphicsLayoutWidget, self).keyReleaseEvent(event)
