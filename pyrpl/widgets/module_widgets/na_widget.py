@@ -110,7 +110,7 @@ class NaWidget(AcquisitionModuleWidget):
             self.attribute_layout.addWidget(self.groups[label])
             for index, wid in enumerate(wids):
                 self.attribute_layout.removeWidget(aws[wid])
-                self.layout_groups[label].addWidget(aws[wid], index%2 + 1, index/2 + 1)
+                self.layout_groups[label].addWidget(aws[wid], int(index%2 + 1), int(index/2 + 1))
         #########################
 
 

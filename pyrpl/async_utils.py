@@ -33,12 +33,14 @@ the background loop
 # sleep_async and that should be used in place of time.sleep.
 
 """
+
 import logging
 from qtpy import QtCore, QtWidgets
 import asyncio
 from asyncio import Future, iscoroutine, TimeoutError, get_event_loop, wait_for
 import sys
 import nest_asyncio
+
 nest_asyncio.apply()
 
 logger = logging.getLogger(name=__name__)
@@ -46,15 +48,16 @@ logger = logging.getLogger(name=__name__)
 # enable ipython QtGui support if needed
 try:
     from IPython import get_ipython
+
     IPYTHON = get_ipython()
     IPYTHON.magic("gui qt")
 except BaseException as e:
-    logger.debug('Could not enable IPython gui support: %s.' % e)
+    logger.debug("Could not enable IPython gui support: %s." % e)
 
 APP = QtWidgets.QApplication.instance()
 if APP is None:
     # logger.debug('Creating new QApplication instance "pyrpl"')
-    APP = QtWidgets.QApplication(['pyrpl'])
+    APP = QtWidgets.QApplication(["pyrpl"])
 
 
 LOOP = None
@@ -63,6 +66,7 @@ LOOP = None
 # scheduled in the default loop seem to never get executed with IPython
 # kernel integration.
 
+
 async def sleep_async(time_s):
     """
     Replaces asyncio.sleep(time_s) inside coroutines. Deals properly with
@@ -70,12 +74,14 @@ async def sleep_async(time_s):
     """
     await asyncio.sleep(time_s)
 
+
 def ensure_future(coroutine):
     """
     Schedules the task described by the coroutine. Deals properly with
     IPython kernel integration.
     """
     return asyncio.ensure_future(coroutine)
+
 
 def wait(future, timeout=None):
     """
@@ -89,17 +95,19 @@ def wait(future, timeout=None):
 
     BEWARE: never use wait in a coroutine (use builtin await instead)
     """
-    assert isinstance(future, Future) or iscoroutine(future)
-    new_future = ensure_future(asyncio.wait({future},
-                                            timeout=timeout,
-                                            ))
+    new_future = ensure_future(
+        asyncio.wait(
+            {future},
+            timeout=timeout,
+        )
+    )
     new_future = wait_for(future, timeout)
     LOOP = get_event_loop()
     try:
         return LOOP.run_until_complete(new_future)
     except TimeoutError:
         print("Timed out")
-    
+
 
 def sleep(time_s):
     """
