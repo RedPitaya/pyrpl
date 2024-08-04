@@ -36,10 +36,10 @@ the background loop
 import logging
 from qtpy import QtCore, QtWidgets
 import asyncio
-from asyncio import Future, iscoroutine
-import quamash
+from asyncio import Future, iscoroutine, TimeoutError, get_event_loop, wait_for
 import sys
-
+import nest_asyncio
+nest_asyncio.apply()
 
 logger = logging.getLogger(name=__name__)
 
@@ -57,7 +57,7 @@ if APP is None:
     APP = QtWidgets.QApplication(['pyrpl'])
 
 
-LOOP = quamash.QEventLoop() # Since tasks scheduled in this loop seem to
+LOOP = None
 # fall in the standard QEventLoop, and we never explicitly ask to run this
 # loop, it might seem useless to send all tasks to LOOP, however, a task
 # scheduled in the default loop seem to never get executed with IPython
@@ -68,14 +68,14 @@ async def sleep_async(time_s):
     Replaces asyncio.sleep(time_s) inside coroutines. Deals properly with
     IPython kernel integration.
     """
-    await asyncio.sleep(time_s, loop=LOOP)
+    await asyncio.sleep(time_s)
 
 def ensure_future(coroutine):
     """
     Schedules the task described by the coroutine. Deals properly with
     IPython kernel integration.
     """
-    return asyncio.ensure_future(coroutine, loop=LOOP)
+    return asyncio.ensure_future(coroutine)
 
 def wait(future, timeout=None):
     """
@@ -92,22 +92,14 @@ def wait(future, timeout=None):
     assert isinstance(future, Future) or iscoroutine(future)
     new_future = ensure_future(asyncio.wait({future},
                                             timeout=timeout,
-                                            loop=LOOP))
-    #if sys.version>='3.7': # this way, it was not possible to execute wait
-                            # behind a qt slot !!!
-    #    LOOP.run_until_complete(new_future)
-    #    done, pending = new_future.result()
-    #else:
-    loop = QtCore.QEventLoop()
-    def quit(*args):
-        loop.quit()
-    new_future.add_done_callback(quit)
-    loop.exec_()
-    done, pending = new_future.result()
-    if future in done:
-        return future.result()
-    else:
-        raise TimeoutError("Timout exceeded")
+                                            ))
+    new_future = wait_for(future, timeout)
+    LOOP = get_event_loop()
+    try:
+        return LOOP.run_until_complete(new_future)
+    except TimeoutError:
+        print("Timed out")
+    
 
 def sleep(time_s):
     """
@@ -138,4 +130,4 @@ class Event(asyncio.Event):
     """
 
     def __init__(self):
-        super(Event, self).__init__(loop=LOOP)
+        super(Event, self).__init__()
