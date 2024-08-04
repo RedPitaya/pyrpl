@@ -559,13 +559,13 @@ class MemoryTree(MemoryBranch):
         if time() > self._lastreload + self._loadsavedeadtime:
             # prepare next timeout
             self._lastreload = time()
-            logger.debug("Checking change time of config file...")
+            #logger.debug("Checking change time of config file...")
             if self._mtime != os.path.getmtime(self._filename):
                 logger.debug("Loading because mtime %s != filetime %s",
                              self._mtime)
                 self._load()
-            else:
-                logger.debug("... no reloading required")
+            # else:
+            #     logger.debug("... no reloading required")
 
     def _write_to_file(self):
         """
