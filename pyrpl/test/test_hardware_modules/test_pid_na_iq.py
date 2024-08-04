@@ -110,7 +110,7 @@ class TestPidNaIq(TestPyrpl):
             theory = pid.transfer_function(f, extradelay=extradelay)
             relerror = np.abs((data - theory) / theory)
             # get max error for values > -50 dB (otherwise its just NA noise)
-            mask = np.asarray(np.abs(theory) > 3e-3, dtype=np.float)
+            mask = np.asarray(np.abs(theory) > 3e-3, dtype=np.float64)
             maxerror = np.max(relerror*mask)
             if maxerror > error_threshold:
                 print(maxerror)
