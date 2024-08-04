@@ -787,7 +787,10 @@ class FilterRegister(BaseRegister, FilterProperty):
                 return 32
             else:
                 return int(np.floor(np.log2(float(x))))+1
-        return clog2(125000000.0/float(self._MINBW(obj)))
+        if self._MINBW(obj) == 0:
+            return int(125000000/10)  # default
+        else:
+            return int(clog2(125000000.0/float(self._MINBW(obj))))
 
     #def _ALPHABITS(self, obj):
     #    return int(np.ceil(np.log2(125000000.0 / self._MINBW(obj))))
