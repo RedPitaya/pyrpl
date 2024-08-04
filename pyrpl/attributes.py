@@ -788,7 +788,7 @@ class FilterRegister(BaseRegister, FilterProperty):
             else:
                 return int(np.floor(np.log2(float(x))))+1
         if self._MINBW(obj) == 0:
-            return int(125000000/10)  # default
+            return int(clog2(125000000))  # default
         else:
             return int(clog2(125000000.0/float(self._MINBW(obj))))
 
@@ -802,6 +802,7 @@ class FilterRegister(BaseRegister, FilterProperty):
         pos = list([self.to_python(obj, b | 0x1 << 7) for b in valid_bits])
         pos = [val if not np.iterable(val) else val[0] for val in pos]
         neg = [-val for val in reversed(pos)]
+        
         valid_frequencies = neg + [0] + pos
         if obj is not None and not hasattr(obj.__class__,
                                            self.name+'_options') and not hasattr(obj, self.name+'_options'):
