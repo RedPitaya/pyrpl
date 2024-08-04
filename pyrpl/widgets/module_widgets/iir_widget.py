@@ -11,7 +11,7 @@ from ... import APP
 
 class MyGraphicsLayoutWidget(pg.GraphicsLayoutWidget):
     def __init__(self, title, parent):
-        super(MyGraphicsLayoutWidget, self).__init__(title)
+        super(MyGraphicsLayoutWidget, self).__init__(parent)
         self.parent = parent
         self.setToolTip("-----plot legend---------------\n"
                         "yellow: theoretical IIR transfer function\n"
@@ -361,8 +361,8 @@ class IirWidget(ModuleWidget):
                                   list(self._phase(tf)),
                                   brush,
                                   size))]
-            self.graph_widget.plots[end].setPoints(mag)
-            self.graph_widget.plots[end+'_phase'].setPoints(phase)
+            self.graph_widget.plots[end].setData(mag)
+            self.graph_widget.plots[end+'_phase'].setData(phase)
         # plot the measurement data if desired
         if self.module.plot_measurement and hasattr(self.module, '_measurement_data'):
             f, v = self.module._measurement_data
