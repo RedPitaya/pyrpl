@@ -46,7 +46,7 @@ class TestPidNaIq(TestPyrpl):
             data = na.single()
             f = na.data_x
             theory = np.array(f * 0 + 1.0,
-                              dtype=np.complex)
+                              dtype=np.complex128)
             # obsolete since na data now comes autocorrected:
             # theory = na.transfer_function(f, extradelay=extradelay)
             relerror = np.abs((data - theory) / theory)

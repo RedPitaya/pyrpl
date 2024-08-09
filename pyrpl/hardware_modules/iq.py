@@ -477,8 +477,8 @@ class Iq(FilterModule):
         self._logger.info("Estimated acquisition time: %.1f s", float(avg + sleeptimes) * points / rbw)
         sys.stdout.flush()  # make sure the time is shown
         # setup averaging
-        self._na_averages = np.int(np.round(125e6 / rbw * avg))
-        self._na_sleepcycles = np.int(np.round(125e6 / rbw * sleeptimes))
+        self._na_averages = np.int64(np.round(125e6 / rbw * avg))
+        self._na_sleepcycles = np.int64(np.round(125e6 / rbw * sleeptimes))
         # compute rescaling factor
         rescale = 2.0 ** (-self._LPFBITS) * 4.0  # 4 is artefact of fpga code
         # obtained by measuring transfer function with bnc cable - could replace the inverse of 4 above
@@ -544,15 +544,15 @@ class Iq(FilterModule):
 
         Returns
         -------
-        tf: np.array(..., dtype=np.complex)
+        tf: np.array(..., dtype=np.complex128)
             The complex open loop transfer function of the module.
         """
         quadrature_delay = 2  # the delay experienced by the signal when it
         # is represented as a quadrature (=lower frequency, less phaseshift)
         # the remaining delay of the module
         module_delay = self._delay - quadrature_delay
-        frequencies = np.array(frequencies, dtype=np.complex)
-        tf = np.array(frequencies * 0, dtype=np.complex) + self.gain
+        frequencies = np.array(frequencies, dtype=np.complex128)
+        tf = np.array(frequencies * 0, dtype=np.complex128) + self.gain
         # bandpass filter
         for f in self.bandwidth:
             if f == 0:
