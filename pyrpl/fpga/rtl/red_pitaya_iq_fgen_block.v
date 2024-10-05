@@ -1227,7 +1227,7 @@ initial begin
    lutrom[1024] = 16'd46358;
    lutrom[1025] = 16'd46394;
    lutrom[1026] = 16'd46429;
-   lutrom[1027] = 16'd464;
+   lutrom[1027] = 16'd46464;
    lutrom[1028] = 16'd46500;
    lutrom[1029] = 16'd46535;
    lutrom[1030] = 16'd46571;
@@ -2032,7 +2032,7 @@ initial begin
    lutrom[1829] = 16'd64617;
    lutrom[1830] = 16'd64625;
    lutrom[1831] = 16'd64634;
-   lutrom[1832] = 16'd642;
+   lutrom[1832] = 16'd64642;
    lutrom[1833] = 16'd64650;
    lutrom[1834] = 16'd64658;
    lutrom[1835] = 16'd64666;
