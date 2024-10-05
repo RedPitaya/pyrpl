@@ -678,7 +678,7 @@ class BoolIgnoreAttributeWidget(BoolAttributeWidget):
             self._gui_to_attribute_mapping.inverse[new_value])
 
 
-class DataWidget(pg.GraphicsWindow):
+class DataWidget(pg.GraphicsLayoutWidget):
     """
     A widget to plot real or complex datasets. To plot data, use the
     function _set_widget_value(new_value, transform_magnitude)
@@ -691,7 +691,7 @@ class DataWidget(pg.GraphicsWindow):
     """
     _defaultcolors = ['m', 'b', 'g', 'r', 'y', 'c', 'o', 'w']
     def __init__(self, title=None):
-        super(DataWidget, self).__init__(title=title)
+        super().__init__(title=title)
         self.plot_item = self.addPlot(title="Curve")
         self.plot_item_phase = self.addPlot(row=1, col=0,
                                                    title="Phase (deg)")
@@ -765,7 +765,7 @@ class PlotAttributeWidget(BaseAttributeWidget):
         Sets the widget (here a QCheckbox)
         :return:
         """
-        self.widget = pg.GraphicsWindow(title="Plot")
+        self.widget = pg.GraphicsLayoutWidget(title="Plot")
         legend = getattr(self.module.__class__, self.attribute_name).legend
         self.pw = self.widget.addPlot(title="%s vs. time (s)"%legend)
         self.plot_start_time = self.time()
@@ -818,7 +818,7 @@ class DataAttributeWidget(PlotAttributeWidget):
     """
 
     def _make_widget(self):
-        self.widget = pg.GraphicsWindow(title="Curve")
+        self.widget = pg.GraphicsLayoutWidget(title="Curve")
         self.plot_item = self.widget.addPlot(title="Curve")
         self.plot_item_phase = self.widget.addPlot(row=1, col=0, title="Phase (deg)")
         self.plot_item_phase.setXLink(self.plot_item)
