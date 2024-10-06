@@ -46,7 +46,7 @@ class MyItem(QtWidgets.QWidget):
             self.item.width()/2 + self.item.x()
         y = self.y*self.parent.view.height() - self.item.height()/2 + \
             self.item.y()
-        self.move(x, y)
+        self.move(int(x), int(y))
 
 
 class MyLabel(MyItem):
