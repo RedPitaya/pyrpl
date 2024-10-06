@@ -345,7 +345,7 @@ class NaWidget(AcquisitionModuleWidget):
 
 class MyGraphicsLayoutWidget(pg.GraphicsLayoutWidget):
     def __init__(self, title, parent_widget):
-        super(MyGraphicsLayoutWidget, self).__init__(title)
+        super(MyGraphicsLayoutWidget, self).__init__(title=title)
         self.parent_widget = parent_widget
         self.setToolTip("IIR transfer function: \n"
                         "----------------------\n"
