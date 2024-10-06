@@ -52,6 +52,7 @@ requirements = ['scp',
                 'nbconvert',
                 'jupyter-client',
                 'nest_asyncio',
+                'qasync',
                 ]
 
 if os.environ.get('TRAVIS') == 'true':

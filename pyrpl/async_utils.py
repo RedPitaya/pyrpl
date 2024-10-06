@@ -40,6 +40,7 @@ import asyncio
 from asyncio import Future, iscoroutine, TimeoutError, get_event_loop, wait_for
 import sys
 import nest_asyncio
+import qasync
 
 nest_asyncio.apply()
 
@@ -50,7 +51,7 @@ try:
     from IPython import get_ipython
 
     IPYTHON = get_ipython()
-    IPYTHON.magic("gui qt")
+    IPYTHON.run_line_magic("gui", "qt")
 except BaseException as e:
     logger.debug("Could not enable IPython gui support: %s." % e)
 
@@ -60,11 +61,31 @@ if APP is None:
     APP = QtWidgets.QApplication(["pyrpl"])
 
 
-LOOP = None
-# fall in the standard QEventLoop, and we never explicitly ask to run this
-# loop, it might seem useless to send all tasks to LOOP, however, a task
-# scheduled in the default loop seem to never get executed with IPython
-# kernel integration.
+LOOP = None  # the main event loop
+INTERACTIVE = True  # True if we are in an interactive IPython session
+
+try:
+    shell = get_ipython().__class__.__name__
+    if shell == 'ZMQInteractiveShell':
+        msg = 'async_utils: Jupyter notebook or qtconsole'
+    elif shell == 'TerminalInteractiveShell':
+        LOOP = qasync.QEventLoop(already_running=False)
+        INTERACTIVE = False
+        msg = 'async_utils: Terminal running IPython'
+    else:
+        LOOP = qasync.QEventLoop(already_running=False)
+        INTERACTIVE = False
+        msg = 'async_utils: # Other type (?)'
+        asyncio.events._set_running_loop(LOOP)
+except NameError:
+    LOOP = qasync.QEventLoop(already_running=False)
+    INTERACTIVE = False
+    msg = 'async_utils: Probably standard Python interpreter'
+    asyncio.events._set_running_loop(LOOP)
+
+logger.debug(msg)
+if INTERACTIVE:
+    nest_asyncio.apply()
 
 
 async def sleep_async(time_s):
@@ -80,7 +101,10 @@ def ensure_future(coroutine):
     Schedules the task described by the coroutine. Deals properly with
     IPython kernel integration.
     """
-    return asyncio.ensure_future(coroutine)
+    if INTERACTIVE:
+        return asyncio.ensure_future(coroutine)
+    else:
+        return asyncio.ensure_future(coroutine, loop=LOOP)
 
 
 def wait(future, timeout=None):
@@ -95,18 +119,22 @@ def wait(future, timeout=None):
 
     BEWARE: never use wait in a coroutine (use builtin await instead)
     """
-    new_future = ensure_future(
-        asyncio.wait(
-            {future},
-            timeout=timeout,
-        )
-    )
-    new_future = wait_for(future, timeout)
-    LOOP = get_event_loop()
-    try:
-        return LOOP.run_until_complete(new_future)
-    except TimeoutError:
-        print("Timed out")
+    if INTERACTIVE:
+        new_future = wait_for(future, timeout)
+        loop = get_event_loop()
+        try:
+            return loop.run_until_complete(new_future)
+        except TimeoutError:
+            logger.debug('async_utils wait: Timout exceeded')
+    else:
+        LOOP.run_until_complete(new_future)
+        done, pending = new_future.result()
+        if future in done:
+            return future.result()
+        else:
+            msg = 'async_utils wait: Timout exceeded'
+            logger.debug(msg)
+            raise TimeoutError("Timout exceeded")
 
 
 def sleep(time_s):
