@@ -117,7 +117,7 @@ class MyDockWidget(QtWidgets.QDockWidget):
                 self.timer = QtCore.QTimer()
                 self.timer.timeout.connect(fn)
                 self.timer.setSingleShot(True)
-                self.timer.setInterval(1.0)
+                self.timer.setInterval(1)
                 self.timer.start()
             event.accept()
             return True
@@ -336,7 +336,7 @@ class PyrplWidget(QtWidgets.QMainWindow):
 
     @window_position.setter
     def window_position(self, coords):
-        self.move(coords[0], coords[1])
+        self.move(int(coords[0]), int(coords[1]))
         self.resize(coords[2], coords[3])
 
     def set_background_color(self, widget):
