@@ -382,7 +382,7 @@ class Pid(FilterModule):
 
         Returns
         -------
-        tf: np.array(..., dtype=complex)
+        tf: np.array(..., dtype=np.complex128)
             The complex open loop transfer function of the module.
         """
         return Pid._transfer_function(frequencies,
@@ -429,7 +429,7 @@ class Pid(FilterModule):
         found in pid._frequency_correction
         """
 
-        frequencies = np.array(frequencies, dtype=complex)
+        frequencies = np.array(frequencies, dtype=np.complex128)
         # integrator with one cycle of extra delay
         tf = i / (frequencies * 1j) \
             * np.exp(-1j * 8e-9 * frequency_correction *

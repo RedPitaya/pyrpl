@@ -3,7 +3,7 @@ This file provides the basic functions to perform asynchronous tasks.
 It provides the 3 functions:
  * ensure_future(coroutine): schedules the task described by the coroutine and
                              returns a Future that can be used as argument of
-                             the follo<ing functions:
+                             the following functions:
  * sleep(time_s): blocks the commandline for time_s, without blocking other
                   tasks such as gui update...
  * wait(future, timeout=None): blocks the commandline until future is set or
@@ -36,10 +36,10 @@ the background loop
 import logging
 from qtpy import QtCore, QtWidgets
 import asyncio
-from asyncio import Future, iscoroutine
-import quamash
+from asyncio import Future, iscoroutine, TimeoutError, get_event_loop, wait_for
 import sys
-
+import nest_asyncio
+import qasync
 
 logger = logging.getLogger(name=__name__)
 
@@ -47,7 +47,7 @@ logger = logging.getLogger(name=__name__)
 try:
     from IPython import get_ipython
     IPYTHON = get_ipython()
-    IPYTHON.magic("gui qt")
+    IPYTHON.run_line_magic("gui", "qt")
 except BaseException as e:
     logger.debug('Could not enable IPython gui support: %s.' % e)
 
@@ -57,25 +57,48 @@ if APP is None:
     APP = QtWidgets.QApplication(['pyrpl'])
 
 
-LOOP = quamash.QEventLoop() # Since tasks scheduled in this loop seem to
-# fall in the standard QEventLoop, and we never explicitly ask to run this
-# loop, it might seem useless to send all tasks to LOOP, however, a task
-# scheduled in the default loop seem to never get executed with IPython
-# kernel integration.
+LOOP = None  # the main event loop
+INTERACTIVE = True  # True if we are in an interactive IPython session
+
+try:
+    shell = get_ipython().__class__.__name__
+    if shell == 'ZMQInteractiveShell':
+        msg = 'async_utils: Jupyter notebook or qtconsole'
+    elif shell == 'TerminalInteractiveShell':
+        LOOP = qasync.QEventLoop(already_running=False)
+        INTERACTIVE = False
+        msg = 'async_utils: Terminal running IPython'
+    else:
+        LOOP = qasync.QEventLoop(already_running=False)
+        INTERACTIVE = False
+        msg = 'async_utils: # Other type (?)'
+        asyncio.events._set_running_loop(LOOP)
+except NameError:
+    LOOP = qasync.QEventLoop(already_running=False)
+    INTERACTIVE = False
+    msg = 'async_utils: Probably standard Python interpreter'
+    asyncio.events._set_running_loop(LOOP)
+
+logger.debug(msg)
+if INTERACTIVE:
+    nest_asyncio.apply()
 
 async def sleep_async(time_s):
     """
     Replaces asyncio.sleep(time_s) inside coroutines. Deals properly with
     IPython kernel integration.
     """
-    await asyncio.sleep(time_s, loop=LOOP)
+    await asyncio.sleep(time_s)
 
 def ensure_future(coroutine):
     """
     Schedules the task described by the coroutine. Deals properly with
     IPython kernel integration.
     """
-    return asyncio.ensure_future(coroutine, loop=LOOP)
+    if INTERACTIVE:
+        return asyncio.ensure_future(coroutine)
+    else:
+        return asyncio.ensure_future(coroutine, loop=LOOP)
 
 def wait(future, timeout=None):
     """
@@ -89,25 +112,26 @@ def wait(future, timeout=None):
 
     BEWARE: never use wait in a coroutine (use builtin await instead)
     """
-    assert isinstance(future, Future) or iscoroutine(future)
     new_future = ensure_future(asyncio.wait({future},
-                                            timeout=timeout,
-                                            loop=LOOP))
-    #if sys.version>='3.7': # this way, it was not possible to execute wait
-                            # behind a qt slot !!!
-    #    LOOP.run_until_complete(new_future)
-    #    done, pending = new_future.result()
-    #else:
-    loop = QtCore.QEventLoop()
-    def quit(*args):
-        loop.quit()
-    new_future.add_done_callback(quit)
-    loop.exec_()
-    done, pending = new_future.result()
-    if future in done:
-        return future.result()
+                                            timeout=timeout))
+
+    if INTERACTIVE:
+        new_future = wait_for(future, timeout)
+        loop = get_event_loop()
+        try:
+            return loop.run_until_complete(new_future)
+        except TimeoutError:
+            logger.error('async_utils wait: Timout exceeded')
     else:
-        raise TimeoutError("Timout exceeded")
+        LOOP.run_until_complete(new_future)
+        done, pending = new_future.result()
+        if future in done:
+            return future.result()
+        else:
+            msg = 'async_utils wait: Timout exceeded'
+            logger.error(msg)
+            raise TimeoutError("Timout exceeded")
+
 
 def sleep(time_s):
     """
@@ -122,7 +146,7 @@ class Event(asyncio.Event):
     """
     Use this Event instead of asyncio.Event() to signal an event. This
     version deals properly with IPython kernel integration.
-    Example: Resumng scope acquisition after a pause (acquisition_module.py)
+    Example: Resuming scope acquisition after a pause (acquisition_module.py)
         def pause(self):
             if self._running_state=='single_async':
                 self._running_state=='paused_single'
@@ -138,4 +162,4 @@ class Event(asyncio.Event):
     """
 
     def __init__(self):
-        super(Event, self).__init__(loop=LOOP)
+        super(Event, self).__init__()

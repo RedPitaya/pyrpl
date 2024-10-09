@@ -110,7 +110,7 @@ class NaWidget(AcquisitionModuleWidget):
             self.attribute_layout.addWidget(self.groups[label])
             for index, wid in enumerate(wids):
                 self.attribute_layout.removeWidget(aws[wid])
-                self.layout_groups[label].addWidget(aws[wid], index%2 + 1, index/2 + 1)
+                self.layout_groups[label].addWidget(aws[wid], int(index%2 + 1), int(index/2 + 1))
         #########################
 
 
@@ -343,9 +343,9 @@ class NaWidget(AcquisitionModuleWidget):
     #    self.module.stop()
 
 
-class MyGraphicsWindow(pg.GraphicsLayoutWidget):
+class MyGraphicsLayoutWidget(pg.GraphicsLayoutWidget):
     def __init__(self, title, parent_widget):
-        super(MyGraphicsWindow, self).__init__(title)
+        super(MyGraphicsLayoutWidget, self).__init__(title=title)
         self.parent_widget = parent_widget
         self.setToolTip("IIR transfer function: \n"
                         "----------------------\n"
@@ -375,4 +375,4 @@ class MyGraphicsWindow(pg.GraphicsLayoutWidget):
         except BaseException as e:
             self.parent_widget.module._logger.error(e)
         finally:
-            return super(GraphicsLayoutWidget, self).mousePressEvent(*args, **kwds)
+            return super(MyGraphicsLayoutWidget, self).mousePressEvent(*args, **kwds)

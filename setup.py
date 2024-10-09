@@ -43,18 +43,18 @@ requirements = ['scp',
                 #'ruamel.yaml' # temporarily disabled
                 'pandas',
                 'pyqtgraph',
-                'numpy>=1.9',
+                'numpy>=1.9,<2.0',
                 'paramiko>=2.0',
                 'nose>=1.0',
-                'PyQt5<=5.14',  # cannot be installed with pip
-                'qtpy<=1.9',  # qtpy 1.11 contains breaking API changes related to pyqtSignals
-                'ipykernel>=5,<6',  # otherwise jupyter breaks
+                # 'PyQt5<=5.14',  # Should be installed using conda or system, cannot be installed with pip
+                'qtpy',  
+                'ipykernel',
                 'nbconvert',
-                'jupyter-client']
-if sys.version_info >= (3,4):  # python version dependencies
-    requirements += ['quamash']
-else:  # python 2.7
-    requirements += ['futures', 'mock']  # mock is now a full dependency
+                'jupyter-client',
+                'nest_asyncio',
+                'qasync',
+                ]
+
 if os.environ.get('TRAVIS') == 'true':
     requirements += ['pandoc']
 if os.environ.get('READTHEDOCS') == 'True':
@@ -62,7 +62,7 @@ if os.environ.get('READTHEDOCS') == 'True':
     # remove a few of the mocked modules
     def rtd_included(r):
         for rr in ['numpy', 'scipy', 'pandas', 'scp', 'paramiko', 'nose',
-                   'quamash', 'qtpy', 'asyncio', 'pyqtgraph']:
+                'qtpy', 'asyncio', 'pyqtgraph']:
             if r.startswith(rr):
                 return False
         return True
