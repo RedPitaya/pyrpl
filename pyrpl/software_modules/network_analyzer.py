@@ -246,7 +246,7 @@ class NetworkAnalyzer(AcquisitionModule, SignalModule):
         module_delay = self._delay
         frequencies = np.array(np.array(frequencies, dtype=np.float64),
                                dtype=np.complex128)
-        tf = np.array(frequencies, dtype=np.complex128) + 1.0
+        tf = np.zeros(frequencies.shape, dtype=np.complex128) + 1.0
         # input filter modelisation
         f = self.iq.inputfilter  # no for loop here because only one filter
         # stage
