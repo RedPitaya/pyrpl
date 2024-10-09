@@ -691,7 +691,7 @@ class DataWidget(pg.GraphicsLayoutWidget):
     """
     _defaultcolors = ['m', 'b', 'g', 'r', 'y', 'c', 'o', 'w']
     def __init__(self, title=None):
-        super(DataWidget, self).__init__(title=title)
+        super().__init__(title=title)
         self.plot_item = self.addPlot(title="Curve")
         self.plot_item_phase = self.addPlot(row=1, col=0,
                                                    title="Phase (deg)")
