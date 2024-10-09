@@ -1,5 +1,7 @@
 from ._version import __version_info__, __version__
 
+import os, sys; sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+
 __author__ = "Leonhard Neuhaus <neuhaus@lkb.upmc.fr>"
 __license__ = "MIT License"
 
@@ -25,7 +27,7 @@ logger.setLevel(logging.INFO)
 try:
     from IPython import get_ipython
     IPYTHON = get_ipython()
-    IPYTHON.magic("gui qt")
+    IPYTHON.run_line_magic("gui", "qt")
 except BaseException as e:
     logger.debug('Could not enable IPython gui support: %s.' % e)
 

@@ -59,7 +59,7 @@ class TestPyrpl(object):
         sleep(0.1)  # give some time for events to get processed
 
         # open all dockwidgets if this is enabled
-        if cls.OPEN_ALL_DOCKWIDGETS:
+        if cls.OPEN_ALL_DOCKWIDGETS and 0 < len(cls.pyrpl.widgets):
             for name, dock_widget in cls.pyrpl.widgets[0].dock_widgets.items():
                 print("Showing widget %s..." % name)
                 dock_widget.setVisible(True)

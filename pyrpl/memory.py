@@ -504,7 +504,7 @@ class MemoryTree(MemoryBranch):
         self._lastsave = time()
         # create a timer to postpone to frequent savings
         self._savetimer = QtCore.QTimer()
-        self._savetimer.setInterval(self._loadsavedeadtime*1000)
+        self._savetimer.setInterval(int(self._loadsavedeadtime*1000))
         self._savetimer.setSingleShot(True)
         self._savetimer.timeout.connect(self._write_to_file)
         self._load()
@@ -560,9 +560,10 @@ class MemoryTree(MemoryBranch):
             # prepare next timeout
             self._lastreload = time()
             logger.debug("Checking change time of config file...")
-            if self._mtime != os.path.getmtime(self._filename):
-                logger.debug("Loading because mtime %s != filetime %s",
-                             self._mtime)
+            filetime = os.path.getmtime(self._filename)
+            if self._mtime != filetime:
+                logger.debug('Loading because mtime {} != filetime {}'.format(
+                    self._mtime, filetime))
                 self._load()
             else:
                 logger.debug("... no reloading required")
