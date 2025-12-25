@@ -1,0 +1,104 @@
+# PyRPL environment configuration for Python 3.9
+# Universal YAML file compatible with Linux, Windows, and macOS
+# Removed build hashes to ensure cross-platform compatibility
+
+name: pyrpl-env  # Name of the conda environment
+
+# Channel priority: conda-forge first for better cross-platform support
+channels:
+  - conda-forge   # Primary channel for universal packages
+  - defaults      # Fallback to Anaconda defaults if needed
+
+dependencies:
+  # ===== CORE SYSTEM DEPENDENCIES =====
+  # These are essential for any Python environment
+  - python=3.9      # Python version - pinned for reproducibility
+  - pip             # Python package installer
+  - setuptools      # Package building utilities
+  - wheel           # Binary package format
+  - ca-certificates # SSL certificates for secure connections
+
+  # ===== PACKAGING & DISTRIBUTION =====
+  - pyinstaller>=5.13.0  # Tool to create standalone executables from Python scripts
+
+  # ===== MAIN PYTHON LIBRARIES =====
+  # Scientific computing stack (versions specified for reproducibility)
+  - numpy=1.21.5    # Numerical computing
+  - scipy=1.7.3     # Scientific algorithms
+  - pandas=1.4.2    # Data analysis and manipulation
+
+  # ===== GUI & VISUALIZATION =====
+  # PyQt5 stack for graphical user interface
+  - pyqt=5.15.10    # Python bindings for Qt5
+  - pyqt5-sip=12.13.0  # SIP bindings for PyQt5
+  - qt=5.15.7       # Qt5 framework
+  - qtpy=2.0.1      # Abstraction layer for PyQt5/PySide2
+  - sip=6.7.12      # Tool to create Python bindings for C/C++ libraries
+  - pyqtgraph>=0.13.0  # Scientific graphics library (conda-forge version)
+
+  # ===== COMPUTATIONAL LIBRARIES =====
+  # Intel Math Kernel Library (MKL) for optimized performance
+  - mkl>=2021.4       # Intel Math Kernel Library
+  - mkl-service>=2.4  # MKL service layer
+  - mkl_fft=1.3.1     # FFT functions using MKL
+  - mkl_random=1.2.2  # Random number generation using MKL
+  - fftw=3.3.9        # Fastest Fourier Transform in the West
+  - numexpr=2.8.4     # Fast numerical expression evaluator
+  - bottleneck=1.3.7  # Fast NumPy array functions
+
+  # ===== VISUALIZATION SUPPORT =====
+  - matplotlib-inline=0.1.6  # Inline matplotlib backend for IPython
+
+  # ===== SECURITY & NETWORKING =====
+  - cryptography=42.0.5  # Cryptography library
+  - bcrypt=3.2.0         # Password hashing
+  - paramiko=2.8.1       # SSHv2 protocol implementation
+  - scp=0.14.1           # SCP module for paramiko
+  - pyyaml=6.0.1         # YAML parser and emitter
+  - pynacl=1.5.0         # Python binding to libsodium
+  - openssl=3.0.13       # TLS/SSL toolkit
+
+  # ===== DEVELOPMENT TOOLS =====
+  - ipython=8.15.0       # Enhanced interactive Python shell
+  - jedi=0.18.1          # Autocompletion library
+  - decorator=5.1.1      # Function decorators
+  - prompt-toolkit=3.0.43 # Library for building command-line interfaces
+  - pygments=2.15.1      # Syntax highlighting library
+  - traitlets=5.7.1      # Configuration system for Python applications
+  - pickleshare=0.7.5    # Small database for sharing objects between processes
+
+  # ===== UTILITY LIBRARIES =====
+  # Various supporting libraries needed by dependencies
+  - asttokens=2.0.5           # Annotate AST trees with source code positions
+  - backcall=0.2.0            # Specifications for callback functions
+  - cffi=1.16.0               # Foreign Function Interface for Python
+  - colorama=0.4.6            # Cross-platform colored terminal text
+  - exceptiongroup=1.2.0      # Backport of PEP 654 (exception groups)
+  - executing=0.8.3           # Get the currently executing AST node
+  - packaging=23.2            # Core utilities for Python packages
+  - parso=0.8.3               # Python parser
+  - pure_eval=0.2.2           # Safely evaluate AST nodes
+  - python-dateutil=2.8.2     # Extensions to datetime module
+  - pytz=2024.1               # Timezone definitions
+  - six=1.16.0                # Python 2 and 3 compatibility utilities
+  - stack_data=0.2.0          # Extract data from Python stack frames
+  - tomli=2.0.1               # TOML parser for Python
+  - typing_extensions=4.9.0   # Backported type hints for older Python versions
+  - wcwidth=0.2.5             # Determine printable width of strings
+
+  # ===== SYSTEM LIBRARIES =====
+  # Conda will automatically select appropriate builds for your OS
+  - blas=*=*mkl          # Use MKL backend for BLAS (not OS-specific)
+  - sqlite>=3.45.3       # SQL database engine
+  - zlib>=1.2.13         # Compression library
+  - xz>=5.4.6            # LZMA compression library
+  - yaml>=0.2.5          # YAML parser library (C implementation)
+  - zstd>=1.5.5          # Zstandard compression
+  - libpng>=1.6.39       # PNG image library
+  - jpeg>=9e             # JPEG image library
+
+  # ===== PIP-ONLY PACKAGES =====
+  # Some packages are only available via pip or have better pip versions
+  - pip:
+      - pyqtgraph==0.13.0  # Note: Exact version pinned for PyRPL compatibility
+      - quamash==0.6.1     # Qt event loop for asyncio
