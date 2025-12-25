@@ -10,7 +10,7 @@ chmod +x Miniconda.sh
 
 $CONDA_DIR/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/main
 $CONDA_DIR/bin/conda tos accept --override-channels --channel https://repo.anaconda.com/pkgs/r
-$CONDA_DIR/bin/conda env create -f ../../environment_uni_pyrpl.yml
+$CONDA_DIR/bin/conda env create -f ../../environment_pyrpl_osx.yml
 source $CONDA_DIR/bin/activate pyrpl-env
 
 cd ../..
