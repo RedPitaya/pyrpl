@@ -46,3 +46,4 @@ exe = EXE(pyz,
           strip=False,
           upx=False,
           console=True )
+

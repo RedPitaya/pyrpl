@@ -1,1 +1,16 @@
-.
+numpy
+scipy
+paramiko
+pandas
+nose
+pyqt5
+qtpy
+pyqtgraph
+pyyaml
+scp
+qasync
+pytest
+nbconvert
+matplotlib
+nbformat
+ipykernel<6.30 

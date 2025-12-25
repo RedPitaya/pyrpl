@@ -77,23 +77,39 @@ class NetworkAnalyzer(AcquisitionModule, SignalModule):
 
     Three example ways on how to use the NetworkAnalyzer:
 
-    - Example 1::
+   
 
-          r = RedPitaya("1.1.1.1")
-          na = NetworkAnalyzer(r)
-          curve = na.curve(start=100, stop=1000, rbw=10...)
+    - Example ::
+        p = Pyrpl(...)
+        na = p.networkanalyzer
 
-    - Example 2::
+        na.output_direct = "out2"                      # Driving output of the network analyzer
+        na.input = "out2"
+        na.acbandwidth = 4                             # High pass filtering of the input signal before demodulation
+        na.logscale = True
+        na.trace_average = 1
+        na.average_per_point = average_per_point
+        na.points = points
 
-          na.start = 100
-          na.stop = 1000
-          curve = na.curve(rbw=10)
+        na.start_freq = 2e4
+        na.stop_freq = 5e5
 
-    - Example 3::
+        na.auto_bandwidth = True                      # adapts the resolution bandwidth so that the q=rbw/frequency ratio stays constant 
+        na.q_factor_min = q_factor_min                # min value of the q=rbw/frequency ratio
+        na.rbw = rbw                                  # Starting resolution bandwidth value 
 
-          na.setup(start=100, stop=1000, ...)
-          for freq, response, amplitude in na.values():
-              print response
+        na.amplitude = 0.2 
+        na.auto_amplitude = is_auto_amplitude        # adapts the output amplitude so that the input stays around the target_dbv value (avoids saturation for system with high dynamics) 
+        na.target_dbv = -40
+        na.auto_amp_min = 0.001                      # min value of the amplitude 
+        na.auto_amp_max = 0.2
+        
+        na.start = 100
+        na.stop = 1000
+        freqs = na.frequencies
+        closed_loop_tf = na.single()                 # returns the complex values of the response measurement
+
+    
     """
     AUTO_AMP_AVG = 20
     _widget_class = NaWidget
@@ -240,13 +256,13 @@ class NetworkAnalyzer(AcquisitionModule, SignalModule):
 
         Returns
         -------
-        tf: np.array(..., dtype=np.complex)
+        tf: np.array(..., dtype=complex)
             The complex open loop transfer function of the module.
         """
         module_delay = self._delay
-        frequencies = np.array(np.array(frequencies, dtype=np.float),
-                               dtype=np.complex)
-        tf = np.array(frequencies*0, dtype=np.complex) + 1.0
+        frequencies = np.array(np.array(frequencies, dtype=float),
+                               dtype=complex)
+        tf = np.array(frequencies*0, dtype=complex) + 1.0
         # input filter modelisation
         f = self.iq.inputfilter  # no for loop here because only one filter
         # stage
@@ -311,10 +327,10 @@ class NetworkAnalyzer(AcquisitionModule, SignalModule):
                 self._current_bandwidth*=2
                 self.iq.bandwidth = [self._current_bandwidth, self._current_bandwidth]
 
-                new_sleep_cycles = np.int(
+                new_sleep_cycles = int(
                     np.round(125e6 / self._current_bandwidth * self.sleeptimes))
                 self.iq._na_sleepcycles = new_sleep_cycles
-                new_na_averages = np.int(np.round(125e6 / self._current_bandwidth *
+                new_na_averages = int(np.round(125e6 / self._current_bandwidth *
                                                        self.average_per_point))
                 self.iq._na_averages = new_na_averages
                 self._cached_na_averages = new_na_averages
@@ -446,10 +462,10 @@ class NetworkAnalyzer(AcquisitionModule, SignalModule):
         self._current_bandwidth = self.iq.bandwidth[0]
 
         # setup averaging
-        self.iq._na_averages = np.int(np.round(125e6 / self._current_bandwidth *
+        self.iq._na_averages = int(np.round(125e6 / self._current_bandwidth *
                                                self.average_per_point))
         self._cached_na_averages = self.iq._na_averages
-        self.iq._na_sleepcycles = np.int(
+        self.iq._na_sleepcycles = int(
             np.round(125e6 / self._current_bandwidth * self.sleeptimes))
         # time_per_point is calculated at setup for speed reasons
         self.time_per_point = self._time_per_point()
@@ -599,7 +615,7 @@ class NetworkAnalyzer(AcquisitionModule, SignalModule):
         self.data_x = self.frequencies if not self.is_zero_span() else \
             np.nan*np.ones(self.points) # Will be filled during acquisition
         self.data_avg = np.zeros(self.points,      # np.empty can create nan
-                                 dtype=np.complex) #and nan*current_avg = nan
+                                 dtype=complex) #and nan*current_avg = nan
                                                    # even if current_avg = 0
 
     @property

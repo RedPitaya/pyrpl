@@ -682,12 +682,12 @@ class IIR(FilterModule):
 
         Returns
         -------
-        tf: np.array(..., dtype=np.complex)
+        tf: np.array(..., dtype=complex)
             The complex open loop transfer function of the module.
         If kind=='all', a list of plotdata tuples is returned that can be
         passed directly to iir.bodeplot().
         """
-        # frequencies = np.array(frequencies, dtype=np.float)
+        # frequencies = np.array(frequencies, dtype=float)
         # take average delay to be half the loops since this is the
         # expectation value for the delay (plus internal propagation delay)
         # module_delay = self._delay + self.loops / 2.0
